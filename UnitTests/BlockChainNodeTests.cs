@@ -35,6 +35,82 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void InitiateAndAddFiftyBlocksAndValidate()
+        {
+            var Node = new BlockChainNode();
+            Node.Initiate();
+
+            for (int i = 1; i < 51; i++)
+            {
+                Node.SubmitData($"Block number {i}");
+            }
+
+
+            Assert.AreEqual(true, Node.ValidateNode());
+            
+        }
+
+
+        [TestMethod]
+        public void InitiateAndAddFiftyBlocksAndTamperAndValidate()
+        {
+            var Node = new BlockChainNode();
+            Node.Initiate();
+
+            for (int i = 1; i < 51; i++)
+            {
+                Node.SubmitData($"Block number {i}");
+            }
+
+
+
+            Node.SetBlockChain(new System.Collections.Generic.List<Block>() {new Block(){
+                     BlockHash= "bad block",
+                     Data = "bad block",
+                     Index= 0,
+                     PreviousBlockHash= "bad block",
+                     TimeStamp= DateTime.Now } });
+
+            Assert.AreEqual(false, Node.ValidateNode());
+
+        }
+
+
+        [TestMethod]
+        public void InitiateAndAddFiftyBlocksAndTamperAndValidate2()
+        {
+            var Node = new BlockChainNode();
+            Node.Initiate();
+
+            for (int i = 1; i < 51; i++)
+            {
+                Node.SubmitData($"Block number {i}");
+            }
+
+            var Node2 = new BlockChainNode();
+            Node2.Initiate();
+            Node2.SubmitData("This is my first block of data! :-)");
+
+            var BadChain = Node2.GetBlockChain();
+            var BadBlock = new Block()
+            {
+                Data = "bad block",
+                Index = 0,
+                PreviousBlockHash = "bad block",
+                TimeStamp = DateTime.Now
+            };
+            BadBlock.GenerateHash(new System.Security.Cryptography.SHA1CryptoServiceProvider());
+            BadChain.AddRange(new System.Collections.Generic.List<Block>() { BadBlock });
+            
+
+            Node.SetBlockChain(BadChain);
+
+            Assert.AreEqual(false, Node.ValidateNode());
+
+        }
+
+
+        [TestMethod]
         public void InitiateAndAddOneMillionBlocks()
         {
             var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());

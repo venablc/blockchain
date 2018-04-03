@@ -150,7 +150,37 @@ namespace SimpleBlockChain
             }
             
         }
+
+
+        public Boolean ValidateNode()
+        {
+            string lastHash = "";
+
+            foreach (Block item in BlockChain)
+            {
+                if (!item.ValidateBlock(_HashAlgorithm))
+                {
+                    return false;
+                }
+
+                if(!string.IsNullOrEmpty(lastHash))
+                {
+                    if (lastHash != item.PreviousBlockHash)
+                    {
+                        return false;
+                    }
+                }
+
+                lastHash = item.BlockHash;
+
+
+            }
+            return true;
+        }
+
+
     }
+
 
 
 }
