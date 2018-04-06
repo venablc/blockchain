@@ -4,6 +4,7 @@ using SimpleBlockChain;
 using System;
 using System.Net.Http;
 using System.Diagnostics;
+using System.IO;
 
 namespace UnitTests
 {
@@ -122,6 +123,41 @@ namespace UnitTests
             }
             
             Assert.AreEqual(1000001, Node.GetChainSize());
+        }
+
+
+        [TestMethod]
+        public void InitiateAndAddOneHundredBlocksAndPersist()
+        {
+            var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+            Node.Initiate();
+
+            for (int i = 1; i < 101; i++)
+            {
+                Node.SubmitData($"Block number {i}");
+            }
+
+            var FileName =  Node.Persist();
+            
+            Assert.AreEqual(true, File.Exists(FileName) );
+        }
+
+        [TestMethod]
+        public void InitiateAndAddOneHundredBlocksAndPersistAndRestore()
+        {
+            var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+            Node.Initiate();
+
+            for (int i = 1; i < 101; i++)
+            {
+                Node.SubmitData($"Block number {i}");
+            }
+            var FileName = Node.Persist();
+            var Node2 = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+            Node2.Initiate();
+            Node2.Restore(FileName);
+
+            Assert.AreEqual(101, Node2.GetChainSize());
         }
 
     }
