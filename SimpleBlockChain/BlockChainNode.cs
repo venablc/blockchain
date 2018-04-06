@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Net;
 using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace SimpleBlockChain
 {
@@ -178,6 +181,58 @@ namespace SimpleBlockChain
             return true;
         }
 
+
+        
+        public string Persist()
+        {
+            var Filename = DateTime.Now.Ticks.ToString();
+            try
+            {
+                Persist(Filename);
+                return Filename;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+            
+        }
+
+        public void Persist(string FileName)
+        {
+            using (FileStream fs = File.Open(FileName, FileMode.Create))
+            {
+                try
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    bf.Serialize(fs, BlockChain);
+                }
+                catch (SerializationException)
+                {
+                    //TODO: log error
+                }
+            }
+        }
+
+        public bool Restore(string Filename)
+        {
+            using (FileStream fs = File.OpenRead(Filename))
+            {
+                try
+                {
+                    BinaryFormatter bf = new BinaryFormatter();
+                    BlockChain = (List<Block>)bf.Deserialize(fs);
+                }
+                catch (SerializationException)
+                {
+                    // Error handling
+                    return false;
+                }
+            }
+            return true;
+        }
 
     }
 
