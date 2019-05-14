@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
+using SimpleBlockChain.Connectors;
 
 namespace SimpleBlockChain
 {
@@ -39,7 +40,7 @@ namespace SimpleBlockChain
             if(NodeConnector != null)
             {
                 this.NodeConnector = NodeConnector;
-                this.NodeConnector.RegisterNode(this);
+                //this.NodeConnector.RegisterNode(this);
             }
 
             if(NodeConnector == null || NodeConnector?.TotalNodeCount() == 0)
@@ -54,11 +55,11 @@ namespace SimpleBlockChain
                 // of the primary connected node.
 
 
-                BlockChain = NodeConnector.RequestInitialBlockChain();
-                if(!(BlockChain?.Count > 0))
-                {
-                    throw new Exception("Unable to retrieve initial blockchain from connected node");
-                }
+                // BlockChain = NodeConnector.RequestInitialBlockChain();
+                // if(!(BlockChain?.Count > 0))
+                // {
+                //     throw new Exception("Unable to retrieve initial blockchain from connected node");
+                // }
                 
             }
 
@@ -98,7 +99,7 @@ namespace SimpleBlockChain
             BlockChain.Add(block);
             if (NodeConnector != null)
             {
-                NodeConnector.BroadcastNewBlockAdd(block);
+                //NodeConnector.BroadcastNewBlockAdd(block);
             }
             
 

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using SimpleBlockChain;
 
-namespace SimpleBlockChain
+namespace SimpleBlockChain.Connectors
 {
     public interface INodeConnector
     {
@@ -14,6 +15,14 @@ namespace SimpleBlockChain
         /// </summary>
         /// <param name="NewBlock"></param>
         void BroadcastNewBlockAdd(Block NewBlock);
+
+
+        /// <summary>
+        /// Receive new blocks broadcasted from connected nodes
+        /// </summary>
+        /// <param name="NewBlock"></param>
+        void ReceiveNewBlockAdd(Block NewBlock);
+
 
         /// <summary>
         /// Validates the given node against all other connected nodes, if 
@@ -31,10 +40,12 @@ namespace SimpleBlockChain
         /// <returns></returns>
         List<Block> RequestInitialBlockChain();
 
+        bool ConnectToPeer(string ip, int port);
 
-         int ConnectedNodeCount();
+        void RegisterNode(BlockChainNode Node);
 
-         int TotalNodeCount();
-        void RegisterNode(BlockChainNode blockChainNode);
+        int TotalNodeCount();
+
+        
     }
 }
