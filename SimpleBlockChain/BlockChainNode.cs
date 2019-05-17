@@ -15,7 +15,7 @@ namespace SimpleBlockChain
     {
 
         
-        private List<Block> BlockChain;
+        private InMemoryChainStore BlockChain;
         private Boolean Initiated = false;
         private HashAlgorithm _HashAlgorithm;
         private INodeConnector NodeConnector;
@@ -31,12 +31,12 @@ namespace SimpleBlockChain
             this._HashAlgorithm = _HashAlgorithm;
         }
 
-        
-
         public void Initiate(INodeConnector NodeConnector = null)
         {
-            if (BlockChain == null) { BlockChain = new List<Block>(); };
+            if (BlockChain == null) { BlockChain = new InMemoryChainStore(); };
             
+            BlockChain.initiate();
+
             if(NodeConnector != null)
             {
                 this.NodeConnector = NodeConnector;
@@ -69,10 +69,6 @@ namespace SimpleBlockChain
         
         }
 
-
-
-
-
         private void AddGenesisBlock()
         {
 
@@ -87,7 +83,7 @@ namespace SimpleBlockChain
             BlockChain.Add(Block);
         }
 
-        public int SubmitData(String data)
+        public long SubmitData(String data)
         {
 
             if (Initiated != true)
@@ -103,7 +99,7 @@ namespace SimpleBlockChain
             }
             
 
-            return BlockChain.Count;
+            return BlockChain.Count();
         }
 
         public Block GenerateBlock(string data)
@@ -113,8 +109,8 @@ namespace SimpleBlockChain
             {
                 Data = data,
                 TimeStamp = DateTime.Now,
-                Index = BlockChain.Count,
-                PreviousBlockHash = BlockChain[BlockChain.Count - 1].BlockHash
+                Index = BlockChain.Count(),
+                PreviousBlockHash = BlockChain.Retrieve((BlockChain.Count() - 1).ToString()).BlockHash
             };
 
             Block.GenerateHash(_HashAlgorithm);
@@ -126,25 +122,25 @@ namespace SimpleBlockChain
         
         public class  NodeNotReadyException : Exception { }
 
-        public int? GetChainSize()
+        public long? GetChainSize()
         {
-            return BlockChain?.Count;
+            return BlockChain.Count();
         }
 
         public void SetBlockChain(List<Block> chain)
         {
-            this.BlockChain = chain;
+            this.BlockChain.Restore(chain);
         }
         
         public List<Block> GetBlockChain()
         {
-            return this.BlockChain;
+            return this.BlockChain.RetrieveAll();
         }
 
         internal void PutBroadcastedBlock(Block data)
         {
 
-            if (data.PreviousBlockHash.Equals(BlockChain[BlockChain.Count - 1].BlockHash))
+            if (data.PreviousBlockHash.Equals(BlockChain.Retrieve((BlockChain.Count() - 1).ToString()).BlockHash))
             {
                 BlockChain.Add(data);
             }
@@ -160,7 +156,7 @@ namespace SimpleBlockChain
         {
             string lastHash = "";
 
-            foreach (Block item in BlockChain)
+            foreach (Block item in BlockChain.RetrieveAll())
             {
                 if (!item.ValidateBlock(_HashAlgorithm))
                 {
@@ -208,11 +204,11 @@ namespace SimpleBlockChain
                 try
                 {
                     BinaryFormatter bf = new BinaryFormatter();
-                    bf.Serialize(fs, BlockChain);
+                    bf.Serialize(fs, BlockChain.RetrieveAll());
                 }
-                catch (SerializationException)
+                catch (SerializationException ex)
                 {
-                    //TODO: log error
+                    Console.WriteLine(ex);
                 }
             }
         }
@@ -224,9 +220,9 @@ namespace SimpleBlockChain
                 try
                 {
                     BinaryFormatter bf = new BinaryFormatter();
-                    BlockChain = (List<Block>)bf.Deserialize(fs);
+                    BlockChain.Restore((List<Block>)bf.Deserialize(fs));
                 }
-                catch (SerializationException)
+                catch (SerializationException ex)
                 {
                     // Error handling
                     return false;

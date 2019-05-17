@@ -13,7 +13,7 @@ namespace SimpleBlockChain
     [Serializable]
     public class Block
     {
-        public int Index;
+        public long Index;
         public DateTime TimeStamp;
         public string Data;
         public string BlockHash;

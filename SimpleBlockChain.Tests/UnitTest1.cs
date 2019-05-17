@@ -1,26 +1,25 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using SimpleBlockChain;
 using System;
+using Xunit;
 using System.Net.Http;
-using System.Diagnostics;
-using System.IO;
 
-namespace UnitTests
+namespace SimpleBlockChain.Tests
 {
-    [TestClass]
-    public class BlockChainNodeTests
+    public class NodeTests
     {
-        [TestMethod]
-        public void InitiateAndAddOneBlock()
+        [Fact]
+        public void BlockChainNodeTests()
         {
+
             var Node = new BlockChainNode();
             Node.Initiate();
             Node.SubmitData("This is my first block of data! :-)");
-            Assert.AreEqual(2, Node.GetChainSize()); // (2 may seem unintuative but this includes the genesis block created as part of initiation
+            Assert.Equal(2, Node.GetChainSize()); // (2 may seem unintuative but this includes the genesis block created as part of initiation
+        
+
         }
 
-        [TestMethod]
+
+        [Fact]
         public void InitiateAndAddFiftyBlocks()
         {
             var Node = new BlockChainNode();
@@ -32,10 +31,10 @@ namespace UnitTests
             }
 
             
-            Assert.AreEqual(51, Node.GetChainSize()); 
+            Assert.Equal(51, Node.GetChainSize()); 
         }
 
-        [TestMethod]
+        [Fact]
         public void InitiateAndAddFiftyBlocksAndValidate()
         {
             var Node = new BlockChainNode();
@@ -47,12 +46,12 @@ namespace UnitTests
             }
 
 
-            Assert.AreEqual(true, Node.ValidateNode());
+            Assert.Equal(true, Node.ValidateNode());
             
         }
 
 
-        [TestMethod]
+        [Fact]
         public void InitiateAndAddFiftyBlocksAndTamperAndValidate()
         {
             var Node = new BlockChainNode();
@@ -72,12 +71,12 @@ namespace UnitTests
                      PreviousBlockHash= "bad block",
                      TimeStamp= DateTime.Now } });
 
-            Assert.AreEqual(false, Node.ValidateNode());
+            Assert.Equal(false, Node.ValidateNode());
 
         }
 
 
-        [TestMethod]
+        [Fact]
         public void InitiateAndAddFiftyBlocksAndTamperAndValidate2()
         {
             var Node = new BlockChainNode();
@@ -106,12 +105,12 @@ namespace UnitTests
 
             Node.SetBlockChain(BadChain);
 
-            Assert.AreEqual(false, Node.ValidateNode());
+            Assert.Equal(false, Node.ValidateNode());
 
         }
 
 
-        [TestMethod]
+        [Fact]
         public void InitiateAndAddOneMillionBlocks()
         {
             var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
@@ -122,11 +121,11 @@ namespace UnitTests
                 Node.SubmitData($"Block number {i}");
             }
             
-            Assert.AreEqual(1000001, Node.GetChainSize());
+            Assert.Equal(1000001, Node.GetChainSize());
         }
 
 
-        [TestMethod]
+        [Fact]
         public void InitiateAndAddOneHundredBlocksAndPersist()
         {
             var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
@@ -139,10 +138,10 @@ namespace UnitTests
 
             var FileName =  Node.Persist();
             
-            Assert.AreEqual(true, File.Exists(FileName) );
+            Assert.Equal(true, System.IO.File.Exists(FileName) );
         }
 
-        [TestMethod]
+        [Fact]
         public void InitiateAndAddOneHundredBlocksAndPersistAndRestore()
         {
             var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
@@ -157,16 +156,19 @@ namespace UnitTests
             Node2.Initiate();
             Node2.Restore(FileName);
 
-            Assert.AreEqual(101, Node2.GetChainSize());
+            Assert.Equal(101, Node2.GetChainSize());
         }
+
+
+
+
 
     }
 
-    [TestClass]
-    public class NodeHttpHostTests
-    {
 
-        [TestMethod]
+    public class NodeHttpTests{
+
+        [Fact]
         public void CreateHostAndCheckResponsive()
         {
             var Node = new BlockChainNode();
@@ -176,11 +178,11 @@ namespace UnitTests
             using (var client = new HttpClient())
             {
                 var response = client.PostAsync("http://localhost:8080/count/", null).Result;
-                Assert.AreEqual(true,response.IsSuccessStatusCode);
+                Assert.Equal(true,response.IsSuccessStatusCode);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void SubmitValidData()
         {
             var Node = new BlockChainNode();
@@ -196,11 +198,11 @@ namespace UnitTests
 
                 var response = client.PostAsync("http://localhost:8080/add/", byteContent).Result;
                 var contents = response.Content.ReadAsStringAsync().Result;
-                Assert.AreEqual("ADDED|2", contents);
+                Assert.Equal("ADDED|2", contents);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void SubmitInvalidData()
         {
             var Node = new BlockChainNode();
@@ -216,11 +218,11 @@ namespace UnitTests
 
                 var response = client.PostAsync("http://localhost:8080/add/", byteContent).Result;
                 var contents = response.Content.ReadAsStringAsync().Result;
-                Assert.AreEqual("No data found, cannot add block with no data, that's pointless!", contents);
+                Assert.Equal("No data found, cannot add block with no data, that's pointless!", contents);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void GetBlockCountWhenChainNew()
         {
             var Node = new BlockChainNode();
@@ -232,11 +234,11 @@ namespace UnitTests
 
                 var response = client.PostAsync("http://localhost:8080/count/", null).Result;
                 var contents = response.Content.ReadAsStringAsync().Result;
-                Assert.AreEqual("1", contents);
+                Assert.Equal("1", contents);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void SubmitNewBlocksAndGetCount()
         {
             var Node = new BlockChainNode();
@@ -257,7 +259,7 @@ namespace UnitTests
 
                 var response = client.PostAsync("http://localhost:8080/count/", null).Result;
                 var contents = response.Content.ReadAsStringAsync().Result;
-                Assert.AreEqual("11", contents);
+                Assert.Equal("11", contents);
             }
         }
 
@@ -268,30 +270,32 @@ namespace UnitTests
         private void WaitForValueMatch(Func<int?> val1, Func<int?> val2, int MaxSeconds)
         {
             System.DateTime Start = System.DateTime.Now;
-            Debug.WriteLine($"WFV Start: {Start}");
+            Console.WriteLine($"WFV Start: {Start}");
             System.DateTime MaxWait = System.DateTime.Now.AddSeconds(MaxSeconds);
-            Debug.WriteLine($"WFV Max Wait: {MaxWait}");
+            Console.WriteLine($"WFV Max Wait: {MaxWait}");
             while (!val1.Invoke().Equals(val2.Invoke()) && MaxWait > System.DateTime.Now)
             {
                 System.Threading.Thread.Sleep(100);
             }
-            Debug.WriteLine($"WFV Completed after (ms): {(System.DateTime.Now - Start).Milliseconds}");
+            Console.WriteLine($"WFV Completed after (ms): {(System.DateTime.Now - Start).Milliseconds}");
             return;
         }
 
         private void WaitForValueMatch(Func<int?> val1, int val2, int MaxSeconds)
         {
             System.DateTime Start = System.DateTime.Now;
-            Debug.WriteLine($"WFV Start: {Start}");
+            Console.WriteLine($"WFV Start: {Start}");
             System.DateTime MaxWait = System.DateTime.Now.AddSeconds(MaxSeconds);
-            Debug.WriteLine($"WFV Max Wait: {MaxWait}");
+            Console.WriteLine($"WFV Max Wait: {MaxWait}");
             while (!val1.Invoke().Equals(val2) && MaxWait > System.DateTime.Now)
             {
                 System.Threading.Thread.Sleep(100);
             }
-            Debug.WriteLine($"WFV Completed after (ms): {(System.DateTime.Now - Start).Milliseconds}");
+            Console.WriteLine($"WFV Completed after (ms): {(System.DateTime.Now - Start).Milliseconds}");
             return;
         }
 
     }
+
+    
 }

@@ -14,7 +14,7 @@ namespace BlockChainNodeHttpHost.HttpFunctions
                 return "No data found, cannot add block with no data, that's pointless!";
             }
 
-            int i = Node.SubmitData(data);
+            long i = Node.SubmitData(data);
 
             if (i <= 0){
                 return "Data not added";

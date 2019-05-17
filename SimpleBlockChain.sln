@@ -1,27 +1,30 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleBlockChain", "SimpleBlockChain\SimpleBlockChain.csproj", "{98F3319B-D691-4247-8030-CA0961D54C32}"
 EndProject
-
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpNodeHostLibrary", "HttpNodeHostLibrary\HttpNodeHostLibrary.csproj", "{37208B74-2A6C-43CB-ABE8-281F39962E56}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HttpNodeHost", "HttpNodeHost\HttpNodeHost.csproj", "{98558FC4-3901-4CD9-8088-906B6A56AB61}"
 EndProject
-
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBlockChain.Tests", "SimpleBlockChain.Tests\SimpleBlockChain.Tests.csproj", "{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{98F3319B-D691-4247-8030-CA0961D54C32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{98F3319B-D691-4247-8030-CA0961D54C32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98F3319B-D691-4247-8030-CA0961D54C32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98F3319B-D691-4247-8030-CA0961D54C32}.Release|Any CPU.Build.0 = Release|Any CPU
-	
 		{37208B74-2A6C-43CB-ABE8-281F39962E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{37208B74-2A6C-43CB-ABE8-281F39962E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37208B74-2A6C-43CB-ABE8-281F39962E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -30,7 +33,18 @@ Global
 		{98558FC4-3901-4CD9-8088-906B6A56AB61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98558FC4-3901-4CD9-8088-906B6A56AB61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98558FC4-3901-4CD9-8088-906B6A56AB61}.Release|Any CPU.Build.0 = Release|Any CPU
-		
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Debug|x64.ActiveCfg = Debug|x64
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Debug|x64.Build.0 = Debug|x64
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Debug|x86.ActiveCfg = Debug|x86
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Debug|x86.Build.0 = Debug|x86
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Release|x64.ActiveCfg = Release|x64
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Release|x64.Build.0 = Release|x64
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Release|x86.ActiveCfg = Release|x86
+		{075EE59C-4AE9-4B13-8D3F-0A7FDB80C6FC}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
