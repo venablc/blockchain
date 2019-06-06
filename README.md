@@ -36,4 +36,4 @@ Other:
 
 
 ## Contributions
-If you are interested in contributing or takng part this project then contact venablc@gmail.com
+If you are interested in contributing or taking part this project then contact venablc@gmail.com
