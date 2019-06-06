@@ -15,7 +15,7 @@ namespace SimpleBlockChain
     {
 
         
-        private InMemoryChainStore BlockChain;
+        private IChainStore BlockChain;
         private Boolean Initiated = false;
         private HashAlgorithm _HashAlgorithm;
         private INodeConnector NodeConnector;
@@ -31,10 +31,12 @@ namespace SimpleBlockChain
             this._HashAlgorithm = _HashAlgorithm;
         }
 
-        public void Initiate(INodeConnector NodeConnector = null)
+        public void Initiate(INodeConnector NodeConnector = null, IChainStore ChainStore = null, Boolean SkipGenesisBlock = false)
         {
-            if (BlockChain == null) { BlockChain = new InMemoryChainStore(); };
+            if (ChainStore == null) { ChainStore = new InMemoryChainStore(); };
             
+            BlockChain = ChainStore;
+
             BlockChain.initiate();
 
             if(NodeConnector != null)
@@ -43,7 +45,7 @@ namespace SimpleBlockChain
                 //this.NodeConnector.RegisterNode(this);
             }
 
-            if(NodeConnector == null || NodeConnector?.TotalNodeCount() == 0)
+            if((NodeConnector == null || NodeConnector?.TotalNodeCount() == 0) && SkipGenesisBlock != true)
             {
                 // This node either has no connector (is therefore independent) or has a connector but
                 // is only listening (hasn't connected to an existing network, possibly the first for a new network)
@@ -109,8 +111,8 @@ namespace SimpleBlockChain
             {
                 Data = data,
                 TimeStamp = DateTime.Now,
-                Index = BlockChain.Count(),
-                PreviousBlockHash = BlockChain.Retrieve((BlockChain.Count() - 1).ToString()).BlockHash
+                Index = BlockChain.Count() + 1,
+                PreviousBlockHash = BlockChain.Retrieve((BlockChain.Count()).ToString()).BlockHash
             };
 
             Block.GenerateHash(_HashAlgorithm);

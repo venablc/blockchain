@@ -1,162 +1,168 @@
 using System;
 using Xunit;
 using System.Net.Http;
+using System.Collections.Generic;
+using StackExchange.Redis;
 
 namespace SimpleBlockChain.Tests
 {
     public class NodeTests
     {
+        static String RedisIp = "192.168.0.18";
+        static String RedisPort = "6379";
+
+        private List<IChainStore> stores = new List<IChainStore>(){
+            new SimpleBlockChain.InMemoryChainStore(),
+            new SimpleBlockChain.RedisChainStore(RedisIp,RedisPort)
+        };
+        
+        // If required, this routine will empty the blockchain storage prior to each test
+        public void ResetStore(IChainStore store){
+            switch (store.GetType().ToString())
+            {
+                case "SimpleBlockChain.RedisChainStore":
+                ConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"{RedisIp}:{RedisPort},allowAdmin=true");
+                IServer server = redis.GetServer($"{RedisIp}:{RedisPort}");
+                server.FlushDatabase(0);
+                break;  
+               
+            }
+        }
+
         [Fact]
         public void BlockChainNodeTests()
         {
+            foreach (IChainStore store in stores)
+            {
+                ResetStore(store);
 
-            var Node = new BlockChainNode();
-            Node.Initiate();
-            Node.SubmitData("This is my first block of data! :-)");
-            Assert.Equal(2, Node.GetChainSize()); // (2 may seem unintuative but this includes the genesis block created as part of initiation
+                var Node = new BlockChainNode();
+                Node.Initiate(null,store);
+                Node.SubmitData("This is my first block of data! :-)");
+                Assert.Equal(2, Node.GetChainSize()); // (2 may seem unintuative but this includes the genesis block created as part of initiation
+            }
+
+           
         
-
         }
 
 
         [Fact]
         public void InitiateAndAddFiftyBlocks()
         {
-            var Node = new BlockChainNode();
-            Node.Initiate();
 
-            for (int i = 1; i < 51; i++)
+            foreach (IChainStore store in stores)
             {
-                Node.SubmitData($"Block number {i}");
+                ResetStore(store);
+
+                var Node = new BlockChainNode();
+                Node.Initiate(null,store);
+
+                for (int i = 1; i < 51; i++)
+                {
+                    Node.SubmitData($"Block number {i}");
+                }
+
+                
+                Assert.Equal(51, Node.GetChainSize()); 
+
             }
 
-            
-            Assert.Equal(51, Node.GetChainSize()); 
         }
 
         [Fact]
         public void InitiateAndAddFiftyBlocksAndValidate()
         {
-            var Node = new BlockChainNode();
-            Node.Initiate();
 
-            for (int i = 1; i < 51; i++)
+            foreach (IChainStore store in stores)
             {
-                Node.SubmitData($"Block number {i}");
+                ResetStore(store);
+
+                var Node = new BlockChainNode();
+                Node.Initiate(null,store);
+
+                for (int i = 1; i < 51; i++)
+                {
+                    Node.SubmitData($"Block number {i}");
+                }
+
+
+                Assert.Equal(true, Node.ValidateNode());
             }
-
-
-            Assert.Equal(true, Node.ValidateNode());
+           
             
         }
 
 
-        [Fact]
-        public void InitiateAndAddFiftyBlocksAndTamperAndValidate()
-        {
-            var Node = new BlockChainNode();
-            Node.Initiate();
-
-            for (int i = 1; i < 51; i++)
-            {
-                Node.SubmitData($"Block number {i}");
-            }
-
-
-
-            Node.SetBlockChain(new System.Collections.Generic.List<Block>() {new Block(){
-                     BlockHash= "bad block",
-                     Data = "bad block",
-                     Index= 0,
-                     PreviousBlockHash= "bad block",
-                     TimeStamp= DateTime.Now } });
-
-            Assert.Equal(false, Node.ValidateNode());
-
-        }
-
 
         [Fact]
-        public void InitiateAndAddFiftyBlocksAndTamperAndValidate2()
+        public void InitiateAndAddOneThousandBlocks()
         {
-            var Node = new BlockChainNode();
-            Node.Initiate();
-
-            for (int i = 1; i < 51; i++)
+            foreach (IChainStore store in stores)
             {
-                Node.SubmitData($"Block number {i}");
+                ResetStore(store);
+
+                var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+                Node.Initiate(null,store);
+
+                for (int i = 1; i < 1001; i++)
+                {
+                    Node.SubmitData($"Block number {i}");
+                }
+                
+                Assert.Equal(1001, Node.GetChainSize());
             }
-
-            var Node2 = new BlockChainNode();
-            Node2.Initiate();
-            Node2.SubmitData("This is my first block of data! :-)");
-
-            var BadChain = Node2.GetBlockChain();
-            var BadBlock = new Block()
-            {
-                Data = "bad block",
-                Index = 0,
-                PreviousBlockHash = "bad block",
-                TimeStamp = DateTime.Now
-            };
-            BadBlock.GenerateHash(new System.Security.Cryptography.SHA1CryptoServiceProvider());
-            BadChain.AddRange(new System.Collections.Generic.List<Block>() { BadBlock });
-            
-
-            Node.SetBlockChain(BadChain);
-
-            Assert.Equal(false, Node.ValidateNode());
-
-        }
-
-
-        [Fact]
-        public void InitiateAndAddOneMillionBlocks()
-        {
-            var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
-            Node.Initiate();
-
-            for (int i = 1; i < 1000001; i++)
-            {
-                Node.SubmitData($"Block number {i}");
-            }
-            
-            Assert.Equal(1000001, Node.GetChainSize());
         }
 
 
         [Fact]
         public void InitiateAndAddOneHundredBlocksAndPersist()
         {
-            var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
-            Node.Initiate();
 
-            for (int i = 1; i < 101; i++)
+            foreach (IChainStore store in stores)
             {
-                Node.SubmitData($"Block number {i}");
+                ResetStore(store);
+
+                var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+                Node.Initiate(null,store);
+
+                for (int i = 1; i < 101; i++)
+                {
+                    Node.SubmitData($"Block number {i}");
+                }
+
+                var FileName =  Node.Persist();
+                
+                Assert.Equal(true, System.IO.File.Exists(FileName) );
+
             }
 
-            var FileName =  Node.Persist();
-            
-            Assert.Equal(true, System.IO.File.Exists(FileName) );
         }
 
         [Fact]
         public void InitiateAndAddOneHundredBlocksAndPersistAndRestore()
         {
-            var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
-            Node.Initiate();
 
-            for (int i = 1; i < 101; i++)
+            foreach (IChainStore store in stores)
             {
-                Node.SubmitData($"Block number {i}");
-            }
-            var FileName = Node.Persist();
-            var Node2 = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
-            Node2.Initiate();
-            Node2.Restore(FileName);
+                ResetStore(store);
 
-            Assert.Equal(101, Node2.GetChainSize());
+                var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+                Node.Initiate(null,store);
+
+                for (int i = 1; i < 101; i++)
+                {
+                    Node.SubmitData($"Block number {i}");
+                }
+                var FileName = Node.Persist();
+                var Node2 = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+                Node2.Initiate(null,null,true);
+                Node2.Restore(FileName);
+
+                Assert.Equal(101, Node2.GetChainSize());
+
+            }
+
         }
 
 

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 
 namespace SimpleBlockChain{
     public class InMemoryChainStore : IChainStore
@@ -6,12 +7,16 @@ namespace SimpleBlockChain{
     
         private List<Block> chain;
 
+        private Boolean FirstBlockAdded = false;
+
         public void initiate(){
             chain = new List<Block>();
         }
 
         public void Add(Block block)
         {
+            FirstBlockAdded = true;
+            
             chain.Add(block);
         }
 
@@ -22,6 +27,10 @@ namespace SimpleBlockChain{
 
         public void Restore(List<Block> chain)
         {
+            if(FirstBlockAdded){
+                throw new Exception("Unable to restore chain, chain has already been started. You can only restore a chain to an empty node.");
+            }
+
             this.chain = chain;
         }
 
@@ -30,7 +39,7 @@ namespace SimpleBlockChain{
             int i;
 
             if(int.TryParse(blockNumber,out i)){
-                return chain[i];
+                return chain[i-1];
             }
 
             return null;
