@@ -33,6 +33,7 @@ Additional connectors:
 Other:
 * Dockerised blockchain node with HTTP node host
 * Improved documentation
+* Nuget package
 
 
 ## Contributions
