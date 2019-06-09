@@ -13,23 +13,30 @@ namespace SimpleBlockChain
     [Serializable]
     public class Block
     {
-        public long Index;
+       
+
         public DateTime TimeStamp;
         public string Data;
         public string BlockHash;
+        
         public string PreviousBlockHash;
 
-        public void GenerateHash(System.Security.Cryptography.HashAlgorithm _HashAlgorithm)
-        {
 
-            BlockHash = _generateHashOfSelf(_HashAlgorithm);
 
+        public Boolean Save(IChainStorageProvider StorageProvider,System.Security.Cryptography.HashAlgorithm _HashAlgorithm){
+
+            
+            TimeStamp = DateTime.Now;
+            this.PreviousBlockHash = StorageProvider.PopBlock()?.BlockHash;
+            this.BlockHash = _generateHashOfSelf(_HashAlgorithm);
+
+            return StorageProvider.Add(this);
 
         }
 
         private string _generateHashOfSelf(System.Security.Cryptography.HashAlgorithm _HashAlgorithm)
         {
-            return System.Text.Encoding.ASCII.GetString(_HashAlgorithm.ComputeHash(Encoding.ASCII.GetBytes(Index.ToString() + TimeStamp.ToString() + Data + PreviousBlockHash))); 
+            return System.Text.Encoding.ASCII.GetString(_HashAlgorithm.ComputeHash(Encoding.ASCII.GetBytes(TimeStamp.ToString() + Data + PreviousBlockHash))); 
         }
 
         internal bool ValidateBlock(System.Security.Cryptography.HashAlgorithm _HashAlgorithm)

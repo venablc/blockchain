@@ -4,5 +4,7 @@ namespace SimpleBlockChain.Connectors
 {
     public class Mirror
     {
+        
     }
+
 }

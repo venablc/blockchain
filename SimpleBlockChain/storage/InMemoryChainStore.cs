@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System;
 
 namespace SimpleBlockChain{
-    public class InMemoryChainStore : IChainStore
+    public class InMemoryChainStorageProvider : IChainStorageProvider
     {
     
         private List<Block> chain;
@@ -13,11 +13,17 @@ namespace SimpleBlockChain{
             chain = new List<Block>();
         }
 
-        public void Add(Block block)
+        public Boolean Add(Block block)
         {
             FirstBlockAdded = true;
-            
+
             chain.Add(block);
+
+            return true;
+        }
+
+        public Block PopBlock(){
+            return Retrieve(Count());
         }
 
         public long Count()
@@ -34,16 +40,15 @@ namespace SimpleBlockChain{
             this.chain = chain;
         }
 
-        public Block Retrieve(string blockNumber)
-        {
-            int i;
-
-            if(int.TryParse(blockNumber,out i)){
-                return chain[i-1];
+        public Block Retrieve(long blockNumber)
+        { 
+            if(blockNumber <= Count() && blockNumber > 0){
+                return chain[(int)blockNumber-1];
             }
-
-            return null;
-            
+            else{
+                return null;
+            }
+           
         }
 
         public List<Block> RetrieveAll()

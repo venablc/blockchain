@@ -15,7 +15,7 @@ namespace SimpleBlockChain
     {
 
         
-        private IChainStore BlockChain;
+        private IChainStorageProvider BlockChain;
         private Boolean Initiated = false;
         private HashAlgorithm _HashAlgorithm;
         private INodeConnector NodeConnector;
@@ -31,9 +31,9 @@ namespace SimpleBlockChain
             this._HashAlgorithm = _HashAlgorithm;
         }
 
-        public void Initiate(INodeConnector NodeConnector = null, IChainStore ChainStore = null, Boolean SkipGenesisBlock = false)
+        public void Initiate(INodeConnector NodeConnector = null, IChainStorageProvider ChainStore = null, Boolean SkipGenesisBlock = false)
         {
-            if (ChainStore == null) { ChainStore = new InMemoryChainStore(); };
+            if (ChainStore == null) { ChainStore = new InMemoryChainStorageProvider(); };
             
             BlockChain = ChainStore;
 
@@ -74,15 +74,9 @@ namespace SimpleBlockChain
         private void AddGenesisBlock()
         {
 
-            var Block = new Block()
-            {
-                TimeStamp = DateTime.Now,
-                Data = "DGPKMANWJQKPDFN1237234PKSDFMSDFH39394",
-                Index = 1,
-                PreviousBlockHash = null
-            };
-            Block.GenerateHash(_HashAlgorithm);
-            BlockChain.Add(Block);
+         
+            GenerateBlock("DGPKMANWJQKPDFN1237234PKSDFMSDFH39394").Save(BlockChain,_HashAlgorithm);
+            
         }
 
         public long SubmitData(String data)
@@ -94,7 +88,7 @@ namespace SimpleBlockChain
             // todo: make this function thread safe
 
             var block = GenerateBlock(data);
-            BlockChain.Add(block);
+            block.Save(BlockChain,_HashAlgorithm);
             if (NodeConnector != null)
             {
                 //NodeConnector.BroadcastNewBlockAdd(block);
@@ -109,13 +103,8 @@ namespace SimpleBlockChain
 
             var Block = new Block()
             {
-                Data = data,
-                TimeStamp = DateTime.Now,
-                Index = BlockChain.Count() + 1,
-                PreviousBlockHash = BlockChain.Retrieve((BlockChain.Count()).ToString()).BlockHash
+                Data = data
             };
-
-            Block.GenerateHash(_HashAlgorithm);
 
             return Block;
 
@@ -142,7 +131,7 @@ namespace SimpleBlockChain
         internal void PutBroadcastedBlock(Block data)
         {
 
-            if (data.PreviousBlockHash.Equals(BlockChain.Retrieve((BlockChain.Count() - 1).ToString()).BlockHash))
+            if (data.PreviousBlockHash.Equals(BlockChain.Retrieve(BlockChain.Count() - 1).BlockHash))
             {
                 BlockChain.Add(data);
             }

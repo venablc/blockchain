@@ -11,13 +11,13 @@ namespace SimpleBlockChain.Tests
         static String RedisIp = "192.168.0.18";
         static String RedisPort = "6379";
 
-        private List<IChainStore> stores = new List<IChainStore>(){
-            new SimpleBlockChain.InMemoryChainStore(),
-            new SimpleBlockChain.RedisChainStore(RedisIp,RedisPort)
+        private List<IChainStorageProvider> stores = new List<IChainStorageProvider>(){
+            new SimpleBlockChain.InMemoryChainStorageProvider(),
+            new SimpleBlockChain.RedisChainStorageProvider(RedisIp,RedisPort)
         };
         
         // If required, this routine will empty the blockchain storage prior to each test
-        public void ResetStore(IChainStore store){
+        public void ResetStore(IChainStorageProvider store){
             switch (store.GetType().ToString())
             {
                 case "SimpleBlockChain.RedisChainStore":
@@ -32,7 +32,7 @@ namespace SimpleBlockChain.Tests
         [Fact]
         public void BlockChainNodeTests()
         {
-            foreach (IChainStore store in stores)
+            foreach (IChainStorageProvider store in stores)
             {
                 ResetStore(store);
 
@@ -51,7 +51,7 @@ namespace SimpleBlockChain.Tests
         public void InitiateAndAddFiftyBlocks()
         {
 
-            foreach (IChainStore store in stores)
+            foreach (IChainStorageProvider store in stores)
             {
                 ResetStore(store);
 
@@ -74,7 +74,7 @@ namespace SimpleBlockChain.Tests
         public void InitiateAndAddFiftyBlocksAndValidate()
         {
 
-            foreach (IChainStore store in stores)
+            foreach (IChainStorageProvider store in stores)
             {
                 ResetStore(store);
 
@@ -98,7 +98,7 @@ namespace SimpleBlockChain.Tests
         [Fact]
         public void InitiateAndAddOneThousandBlocks()
         {
-            foreach (IChainStore store in stores)
+            foreach (IChainStorageProvider store in stores)
             {
                 ResetStore(store);
 
@@ -119,7 +119,7 @@ namespace SimpleBlockChain.Tests
         public void InitiateAndAddOneHundredBlocksAndPersist()
         {
 
-            foreach (IChainStore store in stores)
+            foreach (IChainStorageProvider store in stores)
             {
                 ResetStore(store);
 
@@ -143,7 +143,7 @@ namespace SimpleBlockChain.Tests
         public void InitiateAndAddOneHundredBlocksAndPersistAndRestore()
         {
 
-            foreach (IChainStore store in stores)
+            foreach (IChainStorageProvider store in stores)
             {
                 ResetStore(store);
 

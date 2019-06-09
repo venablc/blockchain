@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using System;
 
 namespace SimpleBlockChain{
-    public interface IChainStore
+    public interface IChainStorageProvider
     {
         void initiate();
-        void Add(Block block);
+        Boolean Add(Block block);
         long Count();
-        Block Retrieve(string blockNumber);
+        Block Retrieve(long blockNumber);
+        Block PopBlock();
         List<Block> RetrieveAll();
         void Restore(List<Block> chain);
     }
