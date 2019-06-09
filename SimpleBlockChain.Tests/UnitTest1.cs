@@ -20,7 +20,7 @@ namespace SimpleBlockChain.Tests
         public void ResetStore(IChainStorageProvider store){
             switch (store.GetType().ToString())
             {
-                case "SimpleBlockChain.RedisChainStore":
+                case "SimpleBlockChain.RedisChainStorageProvider":
                 ConnectionMultiplexer redis = ConnectionMultiplexer.Connect($"{RedisIp}:{RedisPort},allowAdmin=true");
                 IServer server = redis.GetServer($"{RedisIp}:{RedisPort}");
                 server.FlushDatabase(0);
