@@ -3,9 +3,8 @@
   <ItemGroup>
     <ProjectReference Include="..\SimpleBlockChain\SimpleBlockChain.csproj" />
     <ProjectReference Include="..\HttpNodeHostLibrary\HttpNodeHostLibrary.csproj" />
-     
-    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.0" /> --> fix building issues
-
+     <PackageReference Update="Microsoft.NETCore.App" Version="2.0.0" /> 
+    
   </ItemGroup>
 
   <PropertyGroup>
