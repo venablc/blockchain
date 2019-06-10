@@ -12,8 +12,8 @@ namespace SimpleBlockChain.Tests
         static String RedisPort = "6379";
 
         private List<IChainStorageProvider> stores = new List<IChainStorageProvider>(){
-            new SimpleBlockChain.InMemoryChainStorageProvider(),
-            new SimpleBlockChain.RedisChainStorageProvider(RedisIp,RedisPort)
+            new SimpleBlockChain.InMemoryChainStorageProvider()
+            //,new SimpleBlockChain.RedisChainStorageProvider(RedisIp,RedisPort)
         };
         
         // If required, this routine will empty the blockchain storage prior to each test
