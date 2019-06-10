@@ -8,6 +8,7 @@ namespace SimpleBlockChain{
         Boolean Add(Block block);
         long Count();
         Block Retrieve(long blockNumber);
+        List<Block> RetrieveMany(int StartIndex, int Length);
         Block PopBlock();
         List<Block> RetrieveAll();
         void Restore(List<Block> chain);

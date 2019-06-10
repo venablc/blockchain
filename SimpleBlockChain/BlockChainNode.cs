@@ -79,6 +79,7 @@ namespace SimpleBlockChain
             
         }
 
+        // Submit a single block to the blockchain
         public long SubmitData(String data)
         {
 
@@ -98,7 +99,8 @@ namespace SimpleBlockChain
             return BlockChain.Count();
         }
 
-        public Block GenerateBlock(string data)
+        // generates the actual block to be added to the chain with the data provided
+        private Block GenerateBlock(string data)
         {
 
             var Block = new Block()
@@ -109,20 +111,22 @@ namespace SimpleBlockChain
             return Block;
 
         }
-
         
         public class  NodeNotReadyException : Exception { }
 
+        // returns the current number of blocks in the chain.
         public long? GetChainSize()
         {
             return BlockChain.Count();
         }
 
+        // Sets the entired blockchain, this can only be used on a freshly initialized chain with SkipGenersisBlock set to false.
         public void SetBlockChain(List<Block> chain)
         {
             this.BlockChain.Restore(chain);
         }
         
+        // returns the entire blockchain
         public List<Block> GetBlockChain()
         {
             return this.BlockChain.RetrieveAll();
@@ -142,8 +146,10 @@ namespace SimpleBlockChain
             
         }
 
-
+        // validates the entire blockchain by checking that all block hashes are valid.
         public Boolean ValidateNode()
+
+
         {
             string lastHash = "";
 
@@ -169,25 +175,9 @@ namespace SimpleBlockChain
             return true;
         }
 
+       
 
-        
-        public string Persist()
-        {
-            var Filename = DateTime.Now.Ticks.ToString();
-            try
-            {
-                Persist(Filename);
-                return Filename;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            
-            
-        }
-
+        // persist a copy of the entire chain to disk, this can later be restored using Restore()
         public void Persist(string FileName)
         {
             using (FileStream fs = File.Open(FileName, FileMode.Create))
@@ -204,6 +194,7 @@ namespace SimpleBlockChain
             }
         }
 
+        // restores and entire chain to a previous backup using the file generated from Persist()
         public bool Restore(string Filename)
         {
             using (FileStream fs = File.OpenRead(Filename))
@@ -220,6 +211,16 @@ namespace SimpleBlockChain
                 }
             }
             return true;
+        }
+
+        // returns individual block at specified index
+        public Block RetrieveSingleBlock(long BlockNumber){
+            return BlockChain.Retrieve(BlockNumber);
+        }
+
+        // returns a list of blocks at the specified index and length
+        public List<Block> RetrieveMany(int StartIndex, int Length){
+            return BlockChain.RetrieveMany(StartIndex,Length);
         }
 
     }

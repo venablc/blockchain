@@ -131,7 +131,8 @@ namespace SimpleBlockChain.Tests
                     Node.SubmitData($"Block number {i}");
                 }
 
-                var FileName =  Node.Persist();
+                var FileName =  DateTime.Now.Ticks.ToString();
+                Node.Persist(FileName);
                 
                 Assert.Equal(true, System.IO.File.Exists(FileName) );
 
@@ -154,12 +155,70 @@ namespace SimpleBlockChain.Tests
                 {
                     Node.SubmitData($"Block number {i}");
                 }
-                var FileName = Node.Persist();
+                var FileName = DateTime.Now.Ticks.ToString();
+                Node.Persist(FileName);
                 var Node2 = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
                 Node2.Initiate(null,null,true);
                 Node2.Restore(FileName);
 
                 Assert.Equal(101, Node2.GetChainSize());
+
+            }
+
+        }
+
+        [Fact]
+        public void AddFiftyBlocksAndCheckIndividualRetrieval()
+        {
+
+            foreach (IChainStorageProvider store in stores)
+            {
+                ResetStore(store);
+
+                var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+                Node.Initiate(null,store);
+
+                for (int i = 0; i < 50; i++)
+                {
+                    Node.SubmitData($"Block number {i+1}");
+                }
+                
+                Block block = Node.RetrieveSingleBlock(22);
+
+
+                // the reason we expect this to be block with data "21" 
+                //  is because of the additional geness block
+                Assert.Equal("Block number 21", block.Data); 
+
+            }
+        }
+
+            [Fact]
+        public void AddFiftyBlocksAndCheckRangeRetrieval()
+        {
+
+            foreach (IChainStorageProvider store in stores)
+            {
+                ResetStore(store);
+
+                var Node = new BlockChainNode(new System.Security.Cryptography.SHA512Managed());
+                Node.Initiate(null,store);
+
+                for (int i = 0; i < 50; i++)
+                {
+                    Node.SubmitData($"Block number {i+1}");
+                }
+                
+                List<Block> blockList = Node.RetrieveMany(22,5);
+
+                Assert.Equal(5,blockList.Count);
+                // the reason we expect this to be block with data "21" 
+                //  is because of the additional geness block
+                for (int i = 0; i <= 4; i++)
+                {
+                    Assert.Equal($"Block number 2{i+1}", blockList[i].Data); 
+                }
+                
 
             }
 

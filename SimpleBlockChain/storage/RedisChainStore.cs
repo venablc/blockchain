@@ -107,6 +107,23 @@ namespace SimpleBlockChain{
 
         }
 
+        public List<Block> RetrieveMany(int StartIndex, int Length){
+
+            if((StartIndex + Length) > Count()){
+                throw new Exception("Range exceed the blocks currently stored");
+            }
+            
+            var t = new List<Block>();
+
+            for (int i = StartIndex; i <= (StartIndex + Length - 1); i++)
+            {
+                t.Add(Retrieve(i));
+            }
+
+            return t;
+
+        }
+
 
 
         public List<Block> RetrieveAll()

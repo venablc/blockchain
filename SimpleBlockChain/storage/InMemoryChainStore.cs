@@ -55,5 +55,12 @@ namespace SimpleBlockChain{
         {
             return chain;
         }
+
+        public List<Block> RetrieveMany(int StartIndex, int Length){
+
+            return chain.GetRange(StartIndex-1,Length);
+
+        }
+
     }
 }
