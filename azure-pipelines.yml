@@ -23,6 +23,11 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+
+- script: |
+    apt install redis-tools
+    redis-cli -h redis ping
+
 - task: NuGetToolInstaller@0
 
 
