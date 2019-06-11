@@ -8,7 +8,7 @@ namespace SimpleBlockChain.Tests
 {
     public class NodeTests
     {
-        static String RedisIp = "192.168.0.18";
+        static String RedisIp = "127.0.0.1";
         static String RedisPort = "6379";
 
         private List<IChainStorageProvider> stores = new List<IChainStorageProvider>(){
