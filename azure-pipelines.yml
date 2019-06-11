@@ -9,6 +9,14 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+resources:
+  containers:
+  - container: redis
+    image: redis
+
+services:
+  redis: redis
+
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'

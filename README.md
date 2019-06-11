@@ -1,5 +1,7 @@
 # Blockchain
 
+[![Build Status](https://dev.azure.com/venableschris/Blockchain/_apis/build/status/venablc.blockchain?branchName=master)](https://dev.azure.com/venableschris/Blockchain/_build/latest?definitionId=1&branchName=master)
+
 An extensible and flexible C# blockchain implementation, the main purpose of which is to demonstrate basic blockchain concepts.
 
 ## Key solution elements / concepts
