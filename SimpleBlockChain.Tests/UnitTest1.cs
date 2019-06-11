@@ -13,7 +13,7 @@ namespace SimpleBlockChain.Tests
 
         private List<IChainStorageProvider> stores = new List<IChainStorageProvider>(){
             new SimpleBlockChain.InMemoryChainStorageProvider()
-            //,new SimpleBlockChain.RedisChainStorageProvider(RedisIp,RedisPort)
+            ,new SimpleBlockChain.RedisChainStorageProvider(RedisIp,RedisPort)
         };
         
         // If required, this routine will empty the blockchain storage prior to each test
